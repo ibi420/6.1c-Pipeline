@@ -17,12 +17,13 @@ pipeline {
                 echo 'Tool: JUnit, TestNG'
             }
             post {
-                always {
+                success {
                     emailext to: 's223739207@deakin.edu.au',
                         subject: "Unit and Integration Tests Results: ${currentBuild.fullDisplayName}",
                         body: "The Unit and Integration Tests stage has completed with status: ${currentBuild.result}. Check the attached logs for more details.",
                         attachLog: true
                 }
+                
             }
         }
 
@@ -72,15 +73,6 @@ pipeline {
                 echo 'Task: Deploy the application to a production environment.'
                 echo 'Tool: AWS Elastic Beanstalk, Kubernetes'
             }
-        }
-    }
-
-    post {
-        always {
-            emailext to: 's223739207@deakin.edu.au',
-                subject: "Pipeline ${currentBuild.fullDisplayName} Results",
-                body: "Pipeline completed. Result: ${currentBuild.result}. Check Jenkins for details.",
-                attachLog: true
         }
     }
 }
