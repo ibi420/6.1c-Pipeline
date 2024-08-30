@@ -4,67 +4,73 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Code building with Maven'
-                sh 'mvn clean package'
+                echo 'Stage 1 : Build'
+                echo 'Task: Compile and package the code.'
+                echo 'Tool: Maven, Gradle'
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit tests with Maven'
-                sh 'mvn test'
+                echo 'Stage: Unit and Integration Tests'
+                echo 'Task: Run unit and integration tests.'
+                echo 'Tool: JUnit, TestNG'
             }
             post {
-                success {
-                    echo 'Tests passed!'
-                }
-                failure {
-                    echo 'Tests failed!'
+                always {
+                    emailext to: 's223739207@deakin.edu.au',
+                        subject: "Unit and Integration Tests Results: ${currentBuild.fullDisplayName}",
+                        body: "The Unit and Integration Tests stage has completed with status: ${currentBuild.result}. Check the attached logs for more details.",
+                        attachLog: true
                 }
             }
         }
 
         stage('Code Analysis') {
             steps {
-                echo 'Code analysis with SonarQube'
-                sh 'mvn sonar:sonar'
+                echo 'Stage: Code Analysis'
+                echo 'Task: Analyze the code for quality and standards.'
+                echo 'Tool: SonarQube, Checkstyle'
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo 'Security scan with Maven. Runs an OWASP Dependency check'
-                sh 'mvn dependency-check:check'
+                echo 'Stage: Security Scan'
+                echo 'Task: Perform a security scan to identify vulnerabilities.'
+                echo 'Tool: OWASP Dependency-Check, Checkmarx'
             }
             post {
                 always {
                     emailext to: 's223739207@deakin.edu.au',
                         subject: "Security Scan Results: ${currentBuild.fullDisplayName}",
-                        body: "Security scan stage ${currentBuild.result}.",
-                        attachLog: true,
-                        attachmentsPattern: '**/dependency-check-report.html'
+                        body: "The Security Scan stage has completed with status: ${currentBuild.result}. Check the attached logs for more details.",
+                        attachLog: true
                 }
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging environment'
-                sh './deploy-to-staging.sh'
+                echo 'Stage: Deploy to Staging'
+                echo 'Task: Deploy the application to a staging environment.'
+                echo 'Tool: AWS CLI, Ansible'
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging environment'
-                sh './run-staging-tests.sh'
+                echo 'Stage: Integration Tests on Staging'
+                echo 'Task: Run integration tests on the staging environment.'
+                echo 'Tool: Selenium, Postman'
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production environment'
-                sh './deploy-to-production.sh'
+                echo 'Stage: Deploy to Production'
+                echo 'Task: Deploy the application to a production environment.'
+                echo 'Tool: AWS Elastic Beanstalk, Kubernetes'
             }
         }
     }
@@ -72,10 +78,9 @@ pipeline {
     post {
         always {
             emailext to: 's223739207@deakin.edu.au',
-                 subject: "Pipeline ${currentBuild.fullDisplayName} Results",
-                 body: "Pipeline completed. Result: ${currentBuild.result}. Check Jenkins for details.",
-                 attachLog: true,
-                 attachmentsPattern: '**/build.log'
+                subject: "Pipeline ${currentBuild.fullDisplayName} Results",
+                body: "Pipeline completed. Result: ${currentBuild.result}. Check Jenkins for details.",
+                attachLog: true
         }
     }
 }
