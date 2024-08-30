@@ -38,9 +38,10 @@ pipeline {
             }
             post {
                 always {
-                    mail to: 's223739207@deakin.edu.au',
+                    emailext to: 's223739207@deakin.edu.au',
                         subject: "Security Scan Results: ${currentBuild.fullDisplayName}",
                         body: "Security scan stage ${currentBuild.result}.",
+                        attachLog: true,
                         attachmentsPattern: '**/dependency-check-report.html'
                 }
             }
@@ -70,9 +71,10 @@ pipeline {
 
     post {
         always {
-            mail to: 's223739207@deakin.edu.au',
+            emailext to: 's223739207@deakin.edu.au',
                  subject: "Pipeline ${currentBuild.fullDisplayName} Results",
                  body: "Pipeline completed. Result: ${currentBuild.result}. Check Jenkins for details.",
+                 attachLog: true,
                  attachmentsPattern: '**/build.log'
         }
     }
